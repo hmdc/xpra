@@ -1,4 +1,5 @@
-FROM fedora:latest
+FROM fedora:30
+ENV XPRA_VERSION "2.5.1"
 RUN mkdir /var/run/dbus
 RUN mkdir -p /run/user/0/xpra/
 RUN mkdir -p /var/lib/dbus
@@ -8,4 +9,5 @@ RUN yum -y update && \
     yum install -y curl && \
     curl -O https://winswitch.org/downloads/Fedora/winswitch.repo && \
     yum -y update && \
-    yum -y install xpra
+    yum -y install rxvt xpra-${XPRA_VERSION}
+ENTRYPOINT ["/usr/bin/xpra"]
