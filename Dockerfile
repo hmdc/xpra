@@ -9,5 +9,5 @@ RUN yum -y update && \
     yum install -y curl && \
     curl -O https://winswitch.org/downloads/Fedora/winswitch.repo && \
     yum -y update && \
-    yum -y install rxvt xpra-${XPRA_VERSION}
+    yum -y install rxvt xpra xpra-udev
 ENTRYPOINT ["/usr/bin/xpra"]
