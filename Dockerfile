@@ -1,5 +1,6 @@
 FROM fedora:30
-ENV XPRA_VERSION "2.5.1"
+ENV XPRA_VERSION "2.5.2"
+EXPOSE 8080
 RUN mkdir /var/run/dbus
 RUN mkdir -p /run/user/0/xpra/
 RUN mkdir -p /var/lib/dbus
