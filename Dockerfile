@@ -8,7 +8,6 @@ ARG MAINTAINER
 ARG MAINTAINER_URL
 
 LABEL "xpra.version"="$XPRA_VERSION" \
-      "xpra.version.rpm"="$RPM_VERSION" \
       "git.sha"="$GIT_SHA" \
       "git.date"="$GIT_DATE" \
       "build.date"="$BUILD_DATE" \
