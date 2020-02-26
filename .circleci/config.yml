@@ -21,7 +21,7 @@ jobs:
       - anchore/analyze_local_image:
           dockerfile_path: ./Dockerfile
           image_name: "<< parameters.image_name >>"
-          analysis_fail: True
+          policy_failure: True
           timeout: "500"
       - anchore/parse_reports
       - store_artifacts:
