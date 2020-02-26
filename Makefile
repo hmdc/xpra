@@ -59,7 +59,7 @@ relabel:
 		--build-arg GIT_SHA="$(GIT_SHA)" \
 		--build-arg GIT_DATE=$(GIT_DATE) \
 		--build-arg BUILD_DATE=$(BUILD_DATE) \
-		--label packages.rpm.list=$(RPM_PACKAGES_INSTALLED) \
+		--label packages.rpm.list="$(RPM_PACKAGES_INSTALLED)" \
 		--tag $(IMAGE_TAG) \
 		--tag $(IMAGE_NAME):$(PREFIX) \
 		--tag $(IMAGE_NAME):$(PREFIX)-$(RPM_PACKAGES_INSTALLED_HASH) \
