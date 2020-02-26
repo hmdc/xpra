@@ -1,11 +1,35 @@
 version: 2.1
 orbs:
   node: circleci/node@1.1.6
+  anchore: anchore/anchore-engine@1.6.5
 jobs:
+  local_image_scan:
+    parameters:
+      image_name:
+        description: "XPRA image name"
+        default: "hmdc/xpra:3.0-f30"
+        type: string
+    executor: anchore/anchore_engine
+    steps:
+      - setup_remote_docker
+      - attach_workspace:
+          at: /tmp/workspace
+      - checkout
+      - run:
+          command: 'find /tmp/workspace -name "*.tar" -exec docker load -i {} \;'
+          name: load container
+      - anchore/analyze_local_image:
+          dockerfile_path: ./Dockerfile
+          image_name: "<< parameters.image_name >>"
+          analysis_fail: True
+          timeout: "500"
+      - anchore/parse_reports
+      - store_artifacts:
+          path: anchore-reports
   build:
     executor:
       name: node/default
-      tag: '12.14.1'
+      tag: "12.14.1"
     steps:
       - checkout
       - setup_remote_docker
@@ -19,17 +43,24 @@ jobs:
             libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates \
             fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget
       - run:
-          name: Build XPRA container
-          command: make
-      - node/with-cache:
-          steps:
-            - run: npm install
-      - run: npm run test
-      - store_artifacts:
-          path: ./test/artifacts
+          name: Build XPRA container and output
+          command: make build output
+      - persist_to_workspace:
+          root: .
+          paths:
+            - "*.tar"
+      #- node/with-cache:
+      #    steps:
+      #      - run: npm install
+      #- run: npm run test
+      #- store_artifacts:
+      #    path: ./test/artifacts
 workflows:
   version: 2
   build-and-push:
     jobs:
       - build:
           context: dockerhub
+      - local_image_scan:
+          requires:
+            - build
