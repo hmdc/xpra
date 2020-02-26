@@ -11,6 +11,7 @@ IMAGE_NAME:=hmdc/xpra
 GIT_SHA:=$(shell git rev-parse HEAD)
 OS:=$(shell uname | tr '[:upper:]' '[:lower:]')
 GIT_BRANCH:=$(shell git rev-parse --abbrev-ref HEAD)
+SHELL:=/bin/bash
 CONTAINER_TEST_VERSION:=1.8.0
 FEDORA_VERSION:=30
 
