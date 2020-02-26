@@ -15,11 +15,11 @@ CONTAINER_TEST_VERSION:=1.8.0
 FEDORA_VERSION:=30
 
 ifeq ($(GIT_BRANCH), master)
-	IMAGE_TAG:=$(IMAGE_NAME):$(XPRA_VERSION)-fedora$(FEDORA_VERSION)-$(GIT_SHA)
-	PREFIX:=$(XPRA_VERSION)-fedora$(FEDORA_VERSION)
+	IMAGE_TAG:=$(IMAGE_NAME):$(XPRA_VERSION)-f$(FEDORA_VERSION)-$(GIT_SHA)
+	PREFIX:=$(XPRA_VERSION)-f$(FEDORA_VERSION)
 else
-	IMAGE_TAG:=$(IMAGE_NAME):$(XPRA_VERSION)-fedora$(FEDORA_VERSION)-$(GIT_BRANCH)-$(GIT_SHA)
-	PREFIX:=$(XPRA_VERSION)-fedora$(FEDORA_VERSION)
+	IMAGE_TAG:=$(IMAGE_NAME):$(XPRA_VERSION)-f$(FEDORA_VERSION)-$(GIT_BRANCH)-$(GIT_SHA)
+	PREFIX:=$(XPRA_VERSION)-f$(FEDORA_VERSION)
 endif
 
 GIT_DATE:="$(shell TZ=UTC git show --quiet --date='format-local:%Y-%m-%d %H:%M:%S +0000' --format='%cd')"
@@ -46,7 +46,7 @@ buildcontainer:
 
 relabel:
 	$(eval RPM_PACKAGES_INSTALLED:=$(shell ./container-diff analyze daemon://$(IMAGE_NAME):$(PREFIX) --type=rpm -j | gzip  -c | base64))
-	$(eval RPM_PACKAGES_INSTALLED_HASH:=$(echo -n $(RPM_PACKAGES_INSTALLED)|sha1sum))
+	$(eval RPM_PACKAGES_INSTALLED_HASH:=$(shell p=(`echo $(RPM_PACKAGES_INSTALLED)|sha1sum`); echo $$p))
 
 	@echo Relabeling container with package list
 	docker build \

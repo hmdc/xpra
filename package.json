@@ -1,0 +1,19 @@
+{
+  "name": "xpra",
+  "version": "1.0.0",
+  "description": "Tests whether XPRA docker container displays an RXVT term by comparing screenshots.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hmdc/xpra.git"
+  },
+  "author": "HMDC",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hmdc/xpra/issues"
+  },
+  "homepage": "https://github.com/hmdc/xpra#readme"
+}
