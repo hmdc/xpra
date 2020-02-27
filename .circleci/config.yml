@@ -54,7 +54,6 @@ jobs:
             docker run --entrypoint= -i -t hmdc/xpra:latest dnf check-update -q | sed '/^$/d' > updates.txt
             cat \<\<EOF > body.txt
             The following updates are available for hmdc/xpra:latest
-
             EOF
 
             cat updates.txt >> body.txt
@@ -99,7 +98,7 @@ workflows:
   check_for_package_updates:
     triggers:
       - schedule:
-          cron: '*/5 * * * *'
+          cron: '0,5,10,15,20,25,30,35,40,45,50,55 * * * *'
           filters:
             branches:
               only:
