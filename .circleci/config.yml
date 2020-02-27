@@ -31,7 +31,7 @@ jobs:
           command: make run
       - run:
           name: Sleep for 10 seconds while XPRA container starts.
-          command: sleep(10)
+          command: sleep 10s
       - node/with-cache:
           steps:
             - run: npm install
