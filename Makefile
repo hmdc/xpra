@@ -73,8 +73,5 @@ output:
 push:
 	docker push $(IMAGE_NAME):$(PREFIX)
 
-test:	
-	# No reporting available yet.
-	# https://github.com/GoogleContainerTools/container-structure-test/issues/207
-	# Downloading container-structure-test
-	echo Done
+run:	
+	docker run -d -p 8080:8080 $(IMAGE_NAME):$(PREFIX)
