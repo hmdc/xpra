@@ -4,12 +4,10 @@ orbs:
   anchore: anchore/anchore-engine@1.6.5
 jobs:
   build:
-    executor:
-      name: node/default
-      tag: "12.14.1"
+    machine:
+      image: ubuntu-1604:201903-01
     steps:
       - checkout
-      - setup_remote_docker
       - run:
           name: Install headless Chrome dependencies.
           command: |
@@ -35,7 +33,7 @@ jobs:
       - node/with-cache:
           steps:
             - run: npm install
-      - run: npm run test
+            - run: npm run test
       - store_artifacts:
           path: ./test/artifacts
   check_for_package_updates:
