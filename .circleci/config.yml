@@ -31,11 +31,22 @@ jobs:
       - run:
           name: Sleep for 10 seconds while XPRA container starts.
           command: sleep 10s
+      - run:
+          name: Install nvm
+          command: |
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash
+            export NVM_DIR="/opt/circleci/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+            nvm
+            echo 'export NVM_DIR="/opt/circleci/.nvm"' >> $BASH_ENV
+            echo "[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"" >> $BASH_ENV
       - node/with-cache:
           steps:
-            - run: nvm
-            - run: npm install
-            - run: npm run test
+            - run: Install node modules and test xpra.
+              command: |
+                nvm
+                npm install
+                npm run test
       - store_artifacts:
           path: ./test/artifacts
   check_for_package_updates:
