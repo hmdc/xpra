@@ -48,7 +48,22 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: docker pull hmdc/xpra:latest
-      - run: docker run --entrypoint= -i -t hmdc/xpra:latest dnf check-update -q
+      - run:
+          name: Check for updates in hmdc/xpra and e-mail
+          command: |
+            docker run --entrypoint= -i -t hmdc/xpra:latest dnf check-update -q | sed '/^$/d' > updates.txt
+            cat <<EOF > body.txt
+            The following updates are available for hmdc/xpra:latest
+
+            EOF
+
+            cat updates.txt >> body.txt
+            curl -s --user "${API_KEY}" \
+              https://api.mailgun.net/v3/sid.hmdc.harvard.edu/messages \
+              -F from='noreply <ci@sid.hmdc.harvard.edu>' \
+              -F to='evansarm@gmail.com' \
+              -F subject='👀 Package updates available in container hmdc/xpra' \
+              -F text="$(cat updates.txt)"
   local_image_scan:
     parameters:
       image_name:
@@ -81,3 +96,14 @@ workflows:
       - local_image_scan:
           requires:
             - build
+  check_for_package_updates:
+    triggers:
+      - schedule:
+          cron: '*/5 * * * *'
+          filters:
+            branches:
+              only:
+                - '499-alert-when-package-updates-are-available'
+    jobs:
+      - check_for_package_updates:
+          context: mailgun
