@@ -33,6 +33,7 @@ jobs:
           command: sleep 10s
       - node/with-cache:
           steps:
+            - run: nvm
             - run: npm install
             - run: npm run test
       - store_artifacts:
