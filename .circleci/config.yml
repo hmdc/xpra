@@ -58,7 +58,7 @@ jobs:
             curl -s --user "api:${API_KEY}" \
               https://api.mailgun.net/v3/sid.hmdc.harvard.edu/messages \
               -F from='noreply <ci@sid.hmdc.harvard.edu>' \
-              -F to='evansarm@gmail.com' \
+              -F to='operations@help.hmdc.harvard.edu' \
               -F subject='👀 package updates available in container hmdc/xpra' \
               -F text="$(cat body.txt)"
   local_image_scan:
@@ -96,7 +96,7 @@ workflows:
   check_for_package_updates:
     triggers:
       - schedule:
-          cron: '0,5,10,15,20,25,30,35,40,45,50,55 * * * *'
+          cron: '0 9 * * 1'
           filters:
             branches:
               only:
