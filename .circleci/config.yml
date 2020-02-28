@@ -59,8 +59,8 @@ jobs:
               https://api.mailgun.net/v3/sid.hmdc.harvard.edu/messages \
               -F from='noreply <ci@sid.hmdc.harvard.edu>' \
               -F to='evansarm@gmail.com' \
-              -F subject='Package updates available in container hmdc/xpra' \
-              -F text="$(cat updates.txt)"
+              -F subject='👀 package updates available in container hmdc/xpra' \
+              -F text="$(cat body.txt)"
   local_image_scan:
     parameters:
       image_name:
