@@ -96,7 +96,7 @@ workflows:
   check_for_package_updates:
     triggers:
       - schedule:
-          cron: '0 9 * * 1'
+          cron: '* * * * *'
           filters:
             branches:
               only:
