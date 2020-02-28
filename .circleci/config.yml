@@ -43,7 +43,7 @@ jobs:
           path: ./test/artifacts
   check_for_package_updates:
     docker:
-      - image: circleci/buildpack-deps:18.04
+      - image: cimg/base:2020.01
     steps:
       - checkout
       - setup_remote_docker
@@ -60,7 +60,7 @@ jobs:
               -F from='noreply <ci@sid.hmdc.harvard.edu>' \
               -F to='evansarm@gmail.com' \
               -F subject='Package updates available in container hmdc/xpra' \
-              -F text="$(cat updates.txt)" \
+              -F text="$(cat updates.txt)"
   local_image_scan:
     parameters:
       image_name:
