@@ -1,0 +1,106 @@
+version: 2.1
+orbs:
+  node: circleci/node@1.1.6
+  anchore: anchore/anchore-engine@1.6.5
+jobs:
+  build:
+    machine:
+      image: ubuntu-1604:201903-01
+    steps:
+      - checkout
+      - run:
+          name: Install headless Chrome dependencies.
+          command: |
+            sudo apt-get -y update && \
+            sudo apt-get install -yq \
+            gconf-service libasound2 libatk1.0-0 libatk-bridge2.0-0 libc6 libcairo2 libcups2 libdbus-1-3 \
+            libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 \
+            libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 \
+            libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates \
+            fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget
+      - run:
+          name: Build Xpra container and output docker image as a tarball to workspace.
+          command: make build output
+      - persist_to_workspace:
+          root: .
+          paths:
+            - "*.tar"
+      - run:
+          name: Start XPRA container.
+          command: make run
+      - run:
+          name: Sleep for 10 seconds while XPRA container starts.
+          command: sleep 10s
+      - node/install-node:
+          version: 12.14.1
+      - node/install-npm:
+          version: latest
+      - node/with-cache:
+          steps:
+            - run: npm install
+            - run: npm run test
+      - store_artifacts:
+          path: ./test/artifacts
+  check_for_package_updates:
+    docker:
+      - image: cimg/base:2020.01
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Check for updates in hmdc/xpra and e-mail
+          command: |
+            docker pull hmdc/xpra:latest
+            docker run --entrypoint= -i -t hmdc/xpra:latest dnf check-update -q > updates.txt | sed '/^$/d' || echo
+            echo 'The following updates are available for hmdc/xpra:latest' > body.txt
+            echo >> body.txt
+            cat updates.txt >> body.txt
+            curl -s --user "api:${API_KEY}" \
+              https://api.mailgun.net/v3/sid.hmdc.harvard.edu/messages \
+              -F from='noreply <ci@sid.hmdc.harvard.edu>' \
+              -F to='operations@help.hmdc.harvard.edu' \
+              -F subject='Package updates available in container hmdc/xpra' \
+              -F text="$(cat body.txt)"
+  local_image_scan:
+    parameters:
+      image_name:
+        description: "XPRA image name"
+        default: "hmdc/xpra:3.0-f30"
+        type: string
+    executor: anchore/anchore_engine
+    steps:
+      - setup_remote_docker
+      - attach_workspace:
+          at: /tmp/workspace
+      - checkout
+      - run:
+          command: 'find /tmp/workspace -name "*.tar" -exec docker load -i {} \;'
+          name: load container
+      - anchore/analyze_local_image:
+          dockerfile_path: ./Dockerfile
+          image_name: "<< parameters.image_name >>"
+          policy_failure: True
+          timeout: "500"
+      - anchore/parse_reports
+      - store_artifacts:
+          path: anchore-reports
+workflows:
+  version: 2
+  build-and-push:
+    jobs:
+      - build:
+          context: dockerhub
+      - local_image_scan:
+          requires:
+            - build
+  check_for_package_updates:
+    triggers:
+      - schedule:
+          cron: '0 9 * * 1'
+          filters:
+            branches:
+              only:
+                - '499-alert-when-package-updates-are-available'
+    jobs:
+      - check_for_package_updates:
+          context: mailgun

@@ -1,0 +1,27 @@
+{
+  "name": "xpra",
+  "version": "1.0.0",
+  "description": "Tests whether XPRA docker container displays an RXVT term by comparing screenshots.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test/**/*.test.js",
+    "get-screenshot": "pageres -v 'http://localhost:8080/?sound=&floating_menu=&swap_keys=' 1024x768 --overwrite --filename='./test/fixtures/localhost:8080!<%= width %>x<%= height %>'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hmdc/xpra.git"
+  },
+  "author": "HMDC",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hmdc/xpra/issues"
+  },
+  "homepage": "https://github.com/hmdc/xpra#readme",
+  "dependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^7.1.0",
+    "pageres": "^5.2.0",
+    "pageres-cli": "^5.0.0",
+    "pixelmatch": "^5.1.0"
+  }
+}
