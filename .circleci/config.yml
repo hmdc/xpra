@@ -93,14 +93,14 @@ workflows:
       - local_image_scan:
           requires:
             - build
-  check_for_package_updates:
-    triggers:
-      - schedule:
-          cron: '0 9 * * 1'
-          filters:
-            branches:
-              only:
-                - '499-alert-when-package-updates-are-available'
-    jobs:
-      - check_for_package_updates:
-          context: mailgun
+#  check_for_package_updates:
+#    triggers:
+#      - schedule:
+#          cron: '0 9 * * 1'
+#          filters:
+#            branches:
+#              only:
+#                - '499-alert-when-package-updates-are-available'
+#    jobs:
+#      - check_for_package_updates:
+#          context: mailgun
